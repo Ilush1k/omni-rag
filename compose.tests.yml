@@ -1,0 +1,33 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: omni_rag_test
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test-only
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test -d omni_rag_test"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+  tests:
+    build:
+      context: .
+      dockerfile: tests/Dockerfile
+    environment:
+      OMNIRAG_TEST_POSTGRES_DSN: postgresql://test:test-only@postgres:5432/omni_rag_test
+      OMNIRAG_TEST_REDIS_URL: redis://redis:6379/0
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy

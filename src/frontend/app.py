@@ -212,7 +212,7 @@ with st.expander("Прикрепить временный файл"):
 for msg_idx, msg in enumerate(st.session_state.messages):
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
-if prompt := st.chat_input("Например: Какие побочные эффекты у тренболона?"):
+if prompt := st.chat_input("Например: Какие сроки указаны в документе?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
